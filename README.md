@@ -6,6 +6,8 @@ Build a command-line application from scratch to manage a company's employee dat
 
 - [Accepting Criteria ✅](#accepting-criteria)
 
+- [Installation ⚙](#installation) 
+
 - [Demo 🔍](#demo)
 
 - [Preview 📷](#preview)
@@ -41,6 +43,11 @@ THEN I am prompted to enter the employee’s first name, last name, role, and ma
 WHEN I choose to update an employee role
 THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 ```
+## Installation
+Install the following in the ```terminal```:
+- [Node MySQL 2](https://www.npmjs.com/package/mysql2)
+- [console.table package](https://www.npmjs.com/package/console.table)
+- [Inquirer package](https://www.npmjs.com/package/inquirer/v/8.2.4)
 
 ## Demo
 (TBA)
