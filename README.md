@@ -8,6 +8,8 @@ Build a command-line application from scratch to manage a company's employee dat
 
 - [Demo 🔍](#demo)
 
+- [Preview 📷](#preview)
+
 - [Contributors 😎](#contributors)
 
 - [Licenses 🗒](#licenses)
@@ -43,6 +45,8 @@ THEN I am prompted to select an employee to update and their new role and this i
 ## Demo
 (TBA)
 
+## Preview
+(TBA)
 
 ## Contributors
 [😎 Christina Vuong ](https://github.com/ccvuong)
