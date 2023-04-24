@@ -6,7 +6,7 @@ Build a command-line application from scratch to manage a company's employee dat
 
 - [Accepting Criteria ✅](#accepting-criteria)
 
-- [Preview 🔍](#preview)
+- [Demo 🔍](#demo)
 
 - [Contributors 😎](#contributors)
 
