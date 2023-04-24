@@ -1,8 +1,6 @@
 DROP DATABASE IF EXISTS employee_db;
 CREATE DATABASE employee_db;
 
-USE employee_db
-
 -- department
 CREATE TABLE department (
     
@@ -13,7 +11,7 @@ CREATE TABLE role (
 
 )
 
---  employee
+-- employee 
 CREATE TABLE employee (
     
 )
