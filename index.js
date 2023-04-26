@@ -12,15 +12,16 @@ app.use(express.urlencoded({ extended: false }));
 const db = mysql.createConnection(
     {
         host: 'localhost',
+        port: 3001,
         user: 'root',
-        password: 'root',
-        database: 'employee_db'
+        password: 'password',
+        database: 'employee_db',
     },
 );
 
 db.connect(function (err) {
-    if (err) throw err
-    console.log('Connected to the employee database')
+    if (err) throw err;
+    console.log('Connected to the employee database');
     startPrompt();
 });
 
@@ -264,12 +265,12 @@ const updateEmployee = () => {
                 ]
             }
         ]).then((answer) => {
-            db.query(`UPDATE employee SET role_id = ? WHERE last_name = ?, [parseInt(role_id), last_name] `), 
-            [answer.upEmployee, answer.upRole], 
-            (err, res) => {
-                if (err) throw err;
-                mainMenu();
-            }
+            db.query(`UPDATE employee SET role_id = ? WHERE last_name = ?, [parseInt(role_id), last_name] `),
+                [answer.upEmployee, answer.upRole],
+                (err, res) => {
+                    if (err) throw err;
+                    mainMenu();
+                }
 
         })
     })
