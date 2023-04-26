@@ -1,17 +1,33 @@
-DROP DATABASE IF EXISTS employee_db;
-CREATE DATABASE employee_db;
+-- department table
+INSERT INTO department (department_id)
+VALUES 
+("Engineering"),
+("Finance"),
+("Legal"),
+("Sales");
 
--- department
-CREATE TABLE department (
-    
-)
+-- role table
+INSERT INTO role (title, department_id, salary)
+VALUES
+-- 8 positions
+("Sales Lead", 4, 100000),
+("Salesperson", 4, 80000),
+("Lead Engineer", 1, 150000),
+("Software Engineer", 1, 120000),
+("Account Manager", 2, 160000),
+("Accountant", 2, 125000),
+("Legal Team Lead", 3, 250000),
+("Lawyer", 3, 190000);
 
--- role
-CREATE TABLE role (
-
-)
-
--- employee 
-CREATE TABLE employee (
-    
-)
+-- employee table
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES
+-- null = no manager for that employee
+("John", "Doe", 1, NULL),
+("Mick", "Chan" 2, 1),
+("Ashely", "Rodriguez", 3, NULL),
+("Kevin", "Tupik", 4, 3),
+("Kunal", "Singh", 5, NULL),
+("Malia", "Brown", 6, 5),
+("Sarah", "Lourd", 7, NULL),
+("Tom", "Allen", 8, 7);
