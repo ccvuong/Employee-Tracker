@@ -61,7 +61,7 @@ const mainMenu = () => {
                     break;
 
                 case 'Add a department':
-                    addDeparment();
+                    addDepartment();
                     break;
 
                 case 'Add a role':
@@ -83,11 +83,58 @@ const mainMenu = () => {
 
 // all departments table function
 const allDepartments = () => {
-    const query = `SELECT * FROM deparments`;
-    
+    const query = `SELECT * FROM deparment`;
+
     db.query(query, (err, departments) => {
         if (err) throw err;
         console.table(departments);
         mainMenu();
+
     });
+};
+
+// all roles table function
+const allRoles = () => {
+    const query = `SELECT * FROM role`;
+
+    db.query(query, (err, roles) => {
+        if (err) throw err;
+        console.table(roles);
+        mainMenu();
+
+    });
+};
+
+// all employees table function
+const allEmployees = () => {
+    const query = `SELECT * FROM employee`;
+
+    db.query(query, (err, employees) => {
+        if (err) throw err;
+        console.table(employees);
+        mainMenu();
+
+    });
+};
+
+// add department to department table function
+const addDepartment = () => {
+    const query = `SELECT department_id AS "Departments" FROM department`;
+
+    db.query(query, (err, newDepartment) => {
+        if (err) throw err;
+
+        console.table(chalk.yellow('List of current Departments'), newDepartment);
+
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'newDepartment',
+                message: 'Enter new name of Department:'
+            }
+        ]).then((answer) => {
+            db.query(`INSERT INTO department(department_id) VALUES( ? )`, answer.newDepartment)
+            mainMenu();
+        })
+    })
 };
