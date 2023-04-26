@@ -235,3 +235,42 @@ const addEmployee = () => {
     }))
 };
 
+// update employee role function
+const updateEmployee = () => {
+    const query = `SELECT last_name FROM employee; SELECT title FROM role`
+    db.query(query, (err, res) => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'upEmployee',
+                message: 'Select employee to update their role',
+                choices: res.map(({ last_name }) => last_name)
+            },
+            {
+                type: 'list',
+                name: 'upRole',
+                message: 'Select new role for employee:',
+                choices: [
+                    { name: 'Sales Lead', value: 1 },
+                    { name: 'Salesperson', value: 2 },
+                    { name: 'Lead Engineer', value: 3 },
+                    { name: 'Software Engineer', value: 4 },
+                    { name: 'Account Manager', value: 5 },
+                    { name: 'Accountant', value: 6 },
+                    { name: 'Legal Team Lead', value: 7 },
+                    { name: 'Lawyer', value: 8 }
+                ]
+            }
+        ]).then((answer) => {
+            db.query(`UPDATE employee SET role_id = ? WHERE last_name = ?, [parseInt(role_id), last_name] `), 
+            [answer.upEmployee, answer.upRole], 
+            (err, res) => {
+                if (err) throw err;
+                mainMenu();
+            }
+
+        })
+    })
+}
