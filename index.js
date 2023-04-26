@@ -83,7 +83,7 @@ const mainMenu = () => {
 
 // all departments table function
 const allDepartments = () => {
-    const query = `SELECT * FROM deparment`;
+    const query = `SELECT * FROM department`;
 
     db.query(query, (err, departments) => {
         if (err) throw err;
@@ -142,7 +142,7 @@ const addDepartment = () => {
 
 // add role to role table function
 const addRole = () => {
-    const query = `SELECT * FROM role; SELECT * FROM department`
+    const query = `SELECT * FROM role; SELECT * FROM department`;
     db.query(query, (err, newRole) => {
         if (err) throw err;
 
@@ -180,4 +180,58 @@ const addRole = () => {
             mainMenu();
         })
     })
-}
+};
+
+// add employee to employee table function
+const addEmployee = () => {
+    const query = `SELECT * FROM role; SELECT * FROM department, SELECT * FROM employee`;
+
+    db.query(query, (err, newEmployee => {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'firstName',
+                message: "Enter the employee's first name:"
+            },
+            {
+                type: 'input',
+                name: 'lastName',
+                message: "Enter the employee's last name:"
+            },
+            {
+                type: 'list',
+                name: 'theRole',
+                message: "Select the employee's role:",
+                choices: [
+                    { name: 'Sales Lead', value: 1 },
+                    { name: 'Salesperson', value: 2 },
+                    { name: 'Lead Engineer', value: 3 },
+                    { name: 'Software Engineer', value: 4 },
+                    { name: 'Account Manager', value: 5 },
+                    { name: 'Accountant', value: 6 },
+                    { name: 'Legal Team Lead', value: 7 },
+                    { name: 'Lawyer', value: 8 }
+                ]
+            },
+            {
+                type: 'list',
+                name: 'newManager',
+                message: "Add employee's manager:",
+                choices: [
+                    { name: 'John Doe', value: 1 },
+                    { name: 'Ashely Rodriguez', value: 3 },
+                    { name: 'Kunal Singh', value: 5 },
+                    { name: 'Sarah Lourd', value: 7 }
+                ]
+            }
+        ]).then((answer) => {
+            db.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`)
+            mainMenu();
+
+        })
+
+    }))
+};
+
