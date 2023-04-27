@@ -80,14 +80,14 @@ const mainMenu = () => {
 }
 
 // all departments table function
-const allDepartments = ( inMenu = true ) => {
+const allDepartments = () => {
     const query = `SELECT * FROM department`;
 
-    db.query(query, (err, res) => {
+    db.query(query, (err, results) => {
         if (err) throw err;
 
-        console.table(res);
-        if (inMenu) { mainMenu() };
+        console.table(results);
+         mainMenu();
 
     });
 };
@@ -96,9 +96,9 @@ const allDepartments = ( inMenu = true ) => {
 const allRoles = () => {
     const query = `SELECT * FROM role`;
 
-    db.query(query, (err, roles) => {
+    db.query(query, (err, results) => {
         if (err) throw err;
-        console.table(roles);
+        console.table(results);
         mainMenu();
 
     });

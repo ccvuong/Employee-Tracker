@@ -1,7 +1,7 @@
 DROP DATABASE IF EXISTS employee_db;
 CREATE DATABASE employee_db;
 
-USE employee_db
+USE employee_db;
 
 -- department table
 CREATE TABLE department (
@@ -24,8 +24,8 @@ CREATE TABLE role (
 --  employee table
 CREATE TABLE employee (
     id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    first_name VARCHAR(30),
-    last_name VARCHAR(30),
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
     role_id INT NO NULL,
     manager_id INT,
 
@@ -35,4 +35,4 @@ CREATE TABLE employee (
     REFERENCES (manager_id),
 
     ON DELETE SET NULL
-)
+);
