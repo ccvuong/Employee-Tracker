@@ -5,7 +5,7 @@ USE employee_db;
 
 -- department table
 CREATE TABLE department (
-    id: INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     -- varchar(30) = letter characters
     department_name VARCHAR(30)
 );

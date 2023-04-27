@@ -1,5 +1,5 @@
 -- department table
-INSERT INTO department (department_id)
+INSERT INTO department (department_name)
 VALUES 
 ("Engineering"),
 ("Finance"),
