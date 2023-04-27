@@ -2,10 +2,27 @@
   "dependencies": {
     "console.table": "^0.10.0",
     "express": "^4.18.2",
-    "fs": "^0.0.1-security",
     "inquirer": "^8.2.4",
-    "mysql2": "^3.2.4",
-    "scripts": "^0.1.0",
-    "test": "^3.3.0"
-  }
+    "mysql2": "^3.2.4"
+  },
+  "name": "employee-tracker",
+  "description": "Build a command-line application from scratch to manage a company's employee database, using Node.js, Inquirer, and MySQL.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccvuong/Employee-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ccvuong/Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/ccvuong/Employee-Tracker#readme"
 }

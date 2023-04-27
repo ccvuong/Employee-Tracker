@@ -1,7 +1,6 @@
 const express = require('express');
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const fs = require('fs');
 
 const PORT = process.env.port || 3001;
 const app = express();
@@ -13,17 +12,16 @@ app.use(express.urlencoded({ extended: false }));
 const db = mysql.createConnection(
     {
         host: 'localhost',
-        port: 3001,
+        port: PORT,
         user: 'root',
         password: 'password',
         database: 'employee_db',
     },
 );
 
-db.connect(function (err) {
-    if (err) throw err;
+db.connect(function () {
     console.log('Connected to the employee database');
-    startPrompt();
+    mainMenu();
 });
 
 // menu prompt questions
@@ -46,51 +44,50 @@ const mainMenu = () => {
 
             ]
         }
-    ])
+    ]).then(answer => {
+        switch (answer.menu) {
+            case 'View all departments':
+                allDepartments();
+                break;
 
-        .then(answer => {
-            switch (answer.menu) {
-                case 'View all departments':
-                    allDepartments();
-                    break;
+            case 'View all roles':
+                allRoles();
+                break;
 
-                case 'View all roles':
-                    allRoles();
-                    break;
+            case 'View all employees':
+                allEmployees();
+                break;
 
-                case 'View all employees':
-                    allEmployees();
-                    break;
+            case 'Add a department':
+                addDepartment();
+                break;
 
-                case 'Add a department':
-                    addDepartment();
-                    break;
+            case 'Add a role':
+                addRole();
+                break;
 
-                case 'Add a role':
-                    addRole();
-                    break;
+            case 'Add an employee':
+                addEmployee();
+                break;
 
-                case 'Add an employee':
-                    addEmployee();
-                    break;
+            case 'Update an employee role':
+                updateEmployee();
+                break;
 
-                case 'Update an employee role':
-                    updateEmployee();
-                    break;
-
-            }
-        })
+        }
+    })
 
 }
 
 // all departments table function
-const allDepartments = () => {
+const allDepartments = ( inMenu = true ) => {
     const query = `SELECT * FROM department`;
 
-    db.query(query, (err, departments) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
-        console.table(departments);
-        mainMenu();
+
+        console.table(res);
+        if (inMenu) { mainMenu() };
 
     });
 };
