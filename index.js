@@ -1,8 +1,9 @@
+require("dotenv").config();
+
 const express = require('express');
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
-const PORT = process.env.port || 3001;
 const app = express();
 
 // express middleware
@@ -12,14 +13,14 @@ app.use(express.urlencoded({ extended: false }));
 const db = mysql.createConnection(
     {
         host: 'localhost',
-        port: PORT,
-        user: 'root',
-        password: 'password',
-        database: 'employee_db',
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
     },
 );
 
-db.connect(function () {
+db.connect(function (err) {
+    if (err) throw err;
     console.log('Connected to the employee database');
     mainMenu();
 });
@@ -77,7 +78,7 @@ const mainMenu = () => {
         }
     })
 
-}
+};
 
 // all departments table function
 const allDepartments = () => {
@@ -87,8 +88,7 @@ const allDepartments = () => {
         if (err) throw err;
 
         console.table(results);
-         mainMenu();
-
+        mainMenu();
     });
 };
 
@@ -118,12 +118,12 @@ const allEmployees = () => {
 
 // add department to department table function
 const addDepartment = () => {
-    const query = `SELECT department_id AS "Departments" FROM department`;
+    const query = `SELECT department_name AS "Departments" FROM department`;
 
-    db.query(query, (err, newDepartment) => {
+    db.query(query, (err, results) => {
         if (err) throw err;
 
-        console.table(chalk.yellow('List of current Departments'), newDepartment);
+        console.table(('List of current Departments'), results);
 
         inquirer.prompt([
             {
@@ -132,60 +132,75 @@ const addDepartment = () => {
                 message: 'Enter new name of Department:'
             }
         ]).then((answer) => {
-            db.query(`INSERT INTO department(department_id) VALUES( ? )`, answer.newDepartment)
+            db.query(`INSERT INTO department (department_name) VALUES( ? )`, answer.newDepartment)
+            console.log("NEW DEPARTMENT ADDED")
+
             mainMenu();
-        })
-    })
+        });
+
+    });
 };
 
 
 // add role to role table function
 const addRole = () => {
-    const query = `SELECT * FROM role; SELECT * FROM department`;
-    db.query(query, (err, newRole) => {
+    const query = `SELECT * FROM role`; `SELECT * FROM department`;
+    const deptChoices = [];
+
+    db.query(query, (err, results) => {
         if (err) throw err;
 
-        console.table(chalk.yellow('List of current roles'), newRole);
+        results.forEach(({ department_name }) => {
+            deptChoices.push({
+                name: department_name,
+            })
 
-        inquirer.prompt([
-            {
-                type: 'input',
-                name: 'newTitle',
-                message: 'Enter new role title:'
-            },
-            {
-                type: 'input',
-                name: 'newSalary',
-                message: 'Enter salary amount:'
-            },
-            {
-                type: 'list',
-                name: 'department',
-                message: 'Select department for the role:',
-                choices: [
-                    { name: 'Engineering', value: 1 },
-                    { name: 'Finance', value: 2 },
-                    { name: 'Legal', value: 3 },
-                    { name: 'Sale', value: 4 },
-                ]
-            }
-        ]).then((answer) => {
-            db.query(
-                `INSERT INTO role(title, department_id, salary) 
-                VALUES ( ?, ?, ?)
-                ('${answer.newTitle}', '${answer.newSalary}',
-                (SELECT id FROM department WHERE department_id = '${answer.department}'));`
-            )
-            mainMenu();
-        })
+
+        });
     })
+    console.table(('List of current roles'), results);
+
+    inquirer.prompt([
+
+        {
+            type: 'input',
+            name: 'newTitle',
+            message: 'Enter new role title:'
+        },
+        {
+            type: 'input',
+            name: 'newSalary',
+            message: 'Enter salary amount:'
+        },
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Select a department for the new role:',
+            choices: deptChoices
+        }
+    ]).then((answer) => {
+        let deptID
+        for (var i = 0; i < deptChoices.length; i++) {
+            if (answer.department = deptChoices[i].department_name);
+            deptID = deptChoices[i].id
+        }
+
+        db.query(
+            `INSERT INTO role (title, department_id, salary) VALUES ("${answer.newTitle}", "${answer.newSalary}",
+                (SELECT id FROM department WHERE department_name = "${answer.department}"))`
+        )
+        console.log('NEW ROLE ADDED');
+
+        mainMenu();
+    })
+
 };
 
 // add employee to employee table function
 const addEmployee = () => {
-    const query = `SELECT * FROM role; SELECT * FROM department, SELECT * FROM employee`;
+    const query = `SELECT * FROM role`; `SELECT * FROM employee`;
 
-    db.query(query, (err, newEmployee => {
+    db.query(query, (err, results) => {
         if (err) throw err;
 
         inquirer.prompt([
@@ -203,40 +218,49 @@ const addEmployee = () => {
                 type: 'list',
                 name: 'theRole',
                 message: "Select the employee's role:",
-                choices: [
-                    { name: 'Sales Lead', value: 1 },
-                    { name: 'Salesperson', value: 2 },
-                    { name: 'Lead Engineer', value: 3 },
-                    { name: 'Software Engineer', value: 4 },
-                    { name: 'Account Manager', value: 5 },
-                    { name: 'Accountant', value: 6 },
-                    { name: 'Legal Team Lead', value: 7 },
-                    { name: 'Lawyer', value: 8 }
-                ]
+                choices:
+                    // need for loop 
+                    [
+                        { name: 'Sales Lead', value: 1 },
+                        { name: 'Salesperson', value: 2 },
+                        { name: 'Lead Engineer', value: 3 },
+                        { name: 'Software Engineer', value: 4 },
+                        { name: 'Account Manager', value: 5 },
+                        { name: 'Accountant', value: 6 },
+                        { name: 'Legal Team Lead', value: 7 },
+                        { name: 'Lawyer', value: 8 }
+                    ]
             },
             {
                 type: 'list',
-                name: 'newManager',
-                message: "Add employee's manager:",
-                choices: [
-                    { name: 'John Doe', value: 1 },
-                    { name: 'Ashely Rodriguez', value: 3 },
-                    { name: 'Kunal Singh', value: 5 },
-                    { name: 'Sarah Lourd', value: 7 }
-                ]
+                name: 'theManager',
+                message: "Add the employee's manager:",
+                choices:
+                    // need for loop
+                    [
+                        { name: 'John Doe', value: 1 },
+                        { name: 'Ashely Rodriguez', value: 3 },
+                        { name: 'Kunal Singh', value: 5 },
+                        { name: 'Sarah Lourd', value: 7 }
+                    ]
             }
         ]).then((answer) => {
-            db.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`)
+            // update values
+            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?),
+            
+            `
+
+            )
             mainMenu();
 
         })
 
-    }))
+    })
 };
 
 // update employee role function
 const updateEmployee = () => {
-    const query = `SELECT last_name FROM employee; SELECT title FROM role`
+    const query = `SELECT last_name FROM employee`; `SELECT title FROM role`
     db.query(query, (err, res) => {
         if (err) throw err;
 

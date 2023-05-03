@@ -22,9 +22,8 @@ VALUES
 -- employee table
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
--- null = no manager for that employee
 ("John", "Doe", 1, NULL),
-("Mick", "Chan" 2, 1),
+("Mick", "Chan", 2, 1),
 ("Ashely", "Rodriguez", 3, NULL),
 ("Kevin", "Tupik", 4, 3),
 ("Kunal", "Singh", 5, NULL),

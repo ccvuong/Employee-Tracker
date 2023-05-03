@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "console.table": "^0.10.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "inquirer": "^8.2.4",
     "mysql2": "^3.2.4"
@@ -9,7 +10,6 @@
   "description": "Build a command-line application from scratch to manage a company's employee database, using Node.js, Inquirer, and MySQL.",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
