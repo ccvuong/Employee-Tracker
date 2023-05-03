@@ -144,21 +144,19 @@ const addDepartment = () => {
 
 // add role to role table function
 const addRole = () => {
-    const query = `SELECT * FROM role`; `SELECT * FROM department`;
+    const query = `SELECT * FROM department`;
     const deptChoices = [];
 
     db.query(query, (err, results) => {
         if (err) throw err;
 
-        results.forEach(({ department_name }) => {
+        results.forEach(({ department_name, id }) => {
             deptChoices.push({
                 name: department_name,
+                id: id
             })
-
-
         });
     })
-    console.table(('List of current roles'), results);
 
     inquirer.prompt([
 
@@ -180,14 +178,16 @@ const addRole = () => {
         }
     ]).then((answer) => {
         let deptID
-        for (var i = 0; i < deptChoices.length; i++) {
-            if (answer.department = deptChoices[i].department_name);
-            deptID = deptChoices[i].id
+        
+        for ( var i = 0; i < deptChoices.length; i++ ) {
+            if (answer.department == deptChoices[i].name)
+                deptID = deptChoices[i].id
         }
-
+        
         db.query(
-            `INSERT INTO role (title, department_id, salary) VALUES ("${answer.newTitle}", "${answer.newSalary}",
-                (SELECT id FROM department WHERE department_name = "${answer.department}"))`
+            `INSERT INTO role ( title, salary, department_id ) 
+            VALUES ( "${answer.newTitle}", "${answer.newSalary}","${deptID}" )`
+
         )
         console.log('NEW ROLE ADDED');
 
@@ -199,63 +199,90 @@ const addRole = () => {
 // add employee to employee table function
 const addEmployee = () => {
     const query = `SELECT * FROM role`; `SELECT * FROM employee`;
+    const employeeRoles = [];
+    const managerNames = [];
 
+    // roles available 
     db.query(query, (err, results) => {
         if (err) throw err;
 
-        inquirer.prompt([
-            {
-                type: 'input',
-                name: 'firstName',
-                message: "Enter the employee's first name:"
-            },
-            {
-                type: 'input',
-                name: 'lastName',
-                message: "Enter the employee's last name:"
-            },
-            {
-                type: 'list',
-                name: 'theRole',
-                message: "Select the employee's role:",
-                choices:
-                    // need for loop 
-                    [
-                        { name: 'Sales Lead', value: 1 },
-                        { name: 'Salesperson', value: 2 },
-                        { name: 'Lead Engineer', value: 3 },
-                        { name: 'Software Engineer', value: 4 },
-                        { name: 'Account Manager', value: 5 },
-                        { name: 'Accountant', value: 6 },
-                        { name: 'Legal Team Lead', value: 7 },
-                        { name: 'Lawyer', value: 8 }
-                    ]
-            },
-            {
-                type: 'list',
-                name: 'theManager',
-                message: "Add the employee's manager:",
-                choices:
-                    // need for loop
-                    [
-                        { name: 'John Doe', value: 1 },
-                        { name: 'Ashely Rodriguez', value: 3 },
-                        { name: 'Kunal Singh', value: 5 },
-                        { name: 'Sarah Lourd', value: 7 }
-                    ]
-            }
-        ]).then((answer) => {
-            // update values
-            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?),
-            
-            `
+        results.forEach(({ title, department_id, salary, id }) => {
+            employeeRoles.push({
+                title: title,
+                employeeID: department_id,
+                salary: salary,
 
-            )
-            mainMenu();
+                id: id
+            })
+        });
+    })
 
-        })
+    // managers available
+    db.query(query, (err, results) => {
+        if (err) throw err;
+
+        results.forEach(({ first_name, last_name, role_id, manager_id }) => {
+            managerNames.push({
+                firstName: first_name,
+                lastName: last_name,
+                roleID: role_id,
+                managerID: manager_id
+
+            })
+        });
+    })
+
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: "Enter the employee's first name:"
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: "Enter the employee's last name:"
+        },
+        {
+            type: 'list',
+            name: 'theRole',
+            message: "Select the employee's role:",
+            choices: employeeRoles
+        },
+        {
+            type: 'list',
+            name: 'theManager',
+            message: "Add the employee's manager:",
+            choices: managerNames
+        }
+    ]).then((answer) => {
+        // for loop for role selected
+        let roleID
+        
+        for ( var i = 0; i < employeeRoles.length; i++ ) {
+            if(answer.theRole = employeeRoles[i].title)
+                roleID = employeeRoles[i].id
+        }
+        
+
+        // for loop for manager names
+        let managerID
+        for ( var i = 0; i < managerNames.length; i++ ) {
+            if(answer.theManager == managerNames[i].firstName)
+                managerID = managerNames[i].id
+        }
+
+        db.query(`INSERT INTO employee ( first_name, last_name, role_id, manager_id ) 
+            VALUES ( "${answer.firstName}", "${answer.lastName}", "${roleID}", "${managerID}" )`
+
+        )
+        console.log('NEW EMPLOYEE ADDED')
+
+        mainMenu();
 
     })
+
+
 };
 
 // update employee role function
