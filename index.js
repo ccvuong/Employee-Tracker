@@ -153,6 +153,7 @@ const addRole = () => {
         results.forEach(({ department_name, id }) => {
             deptChoices.push({
                 name: department_name,
+
                 id: id
             })
         });
@@ -177,13 +178,13 @@ const addRole = () => {
             choices: deptChoices
         }
     ]).then((answer) => {
+        // for loop on new department name
         let deptID
-        
-        for ( var i = 0; i < deptChoices.length; i++ ) {
+        for (var i = 0; i < deptChoices.length; i++) {
             if (answer.department == deptChoices[i].name)
                 deptID = deptChoices[i].id
         }
-        
+
         db.query(
             `INSERT INTO role ( title, salary, department_id ) 
             VALUES ( "${answer.newTitle}", "${answer.newSalary}","${deptID}" )`
@@ -198,18 +199,17 @@ const addRole = () => {
 
 // add employee to employee table function
 const addEmployee = () => {
-    const query = `SELECT * FROM role`; `SELECT * FROM employee`;
     const employeeRoles = [];
     const managerNames = [];
 
     // roles available 
-    db.query(query, (err, results) => {
+    db.query(`SELECT * FROM role`, (err, results) => {
         if (err) throw err;
 
         results.forEach(({ title, department_id, salary, id }) => {
             employeeRoles.push({
-                title: title,
-                employeeID: department_id,
+                name: title,
+                employee_ID: department_id,
                 salary: salary,
 
                 id: id
@@ -218,15 +218,16 @@ const addEmployee = () => {
     })
 
     // managers available
-    db.query(query, (err, results) => {
+    db.query(`SELECT * FROM employee`, (err, results) => {
         if (err) throw err;
 
-        results.forEach(({ first_name, last_name, role_id, manager_id }) => {
+        results.forEach(({ first_name, last_name, role_id, manager_id, id }) => {
             managerNames.push({
-                firstName: first_name,
-                lastName: last_name,
+                name: first_name + ' ' + last_name,
                 roleID: role_id,
-                managerID: manager_id
+                manager_ID: manager_id,
+
+                id: id
 
             })
         });
@@ -258,17 +259,16 @@ const addEmployee = () => {
     ]).then((answer) => {
         // for loop for role selected
         let roleID
-        
-        for ( var i = 0; i < employeeRoles.length; i++ ) {
-            if(answer.theRole = employeeRoles[i].title)
+        for (var i = 0; i < employeeRoles.length; i++) {
+            if (answer.theRole == employeeRoles[i].name)
                 roleID = employeeRoles[i].id
         }
-        
 
-        // for loop for manager names
+
+        // for loop for manager name selected
         let managerID
-        for ( var i = 0; i < managerNames.length; i++ ) {
-            if(answer.theManager == managerNames[i].firstName)
+        for (var i = 0; i < managerNames.length; i++) {
+            if (answer.theManager == managerNames[i].name)
                 managerID = managerNames[i].id
         }
 
@@ -287,40 +287,78 @@ const addEmployee = () => {
 
 // update employee role function
 const updateEmployee = () => {
-    const query = `SELECT last_name FROM employee`; `SELECT title FROM role`
-    db.query(query, (err, res) => {
+    const selectEmployee = [];
+    const changingRole = [];
+
+    // selecting available employees
+    db.query(`SELECT first_name FROM employee`, (err, results) => {
         if (err) throw err;
 
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'upEmployee',
-                message: 'Select employee to update their role',
-                choices: res.map(({ last_name }) => last_name)
-            },
-            {
-                type: 'list',
-                name: 'upRole',
-                message: 'Select new role for employee:',
-                choices: [
-                    { name: 'Sales Lead', value: 1 },
-                    { name: 'Salesperson', value: 2 },
-                    { name: 'Lead Engineer', value: 3 },
-                    { name: 'Software Engineer', value: 4 },
-                    { name: 'Account Manager', value: 5 },
-                    { name: 'Accountant', value: 6 },
-                    { name: 'Legal Team Lead', value: 7 },
-                    { name: 'Lawyer', value: 8 }
-                ]
-            }
-        ]).then((answer) => {
-            db.query(`UPDATE employee SET role_id = ? WHERE last_name = ?, [parseInt(role_id), last_name] `),
-                [answer.upEmployee, answer.upRole],
-                (err, res) => {
-                    if (err) throw err;
-                    mainMenu();
-                }
+        results.forEach(({ first_name, last_name, role_id, manager_id, id }) => {
+            selectEmployee.push({
+                name: first_name + ' ' + last_name,
+                roleID: role_id,
+                manager_ID: manager_id,
 
-        })
+                id: id
+            })
+        });
+
     })
+
+    // selecting from available roles 
+    db.query(`SELECT title FROM role`, (err, results) => {
+        if (err) throw err;
+
+        results.forEach(({ title, department_id, salary, id }) => {
+            changingRole.push({
+                name: title,
+                deptRoleID: department_id,
+                salary: salary,
+
+                id: id
+            })
+        });
+
+    })
+
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'upEmployee',
+            message: 'Select an employee to update their role',
+            choices: selectEmployee
+        },
+        {
+            type: 'list',
+            name: 'upRole',
+            message: 'Select new role for employee:',
+            choices: changingRole
+        }
+    ]).then((answer) => {
+        // for loop for employee selected
+        let pickEmployee
+        for (var i = 0; i < selectEmployee.length; i++) {
+            if (answer.upRole == selectEmployee[i].name)
+                pickEmployee = selectEmployee[i].id
+        }
+
+        // for loop for role selected
+        let roleChange
+        for (var i = 0; i < changingRole.length; i++) {
+            if (answer.upRole == changingRole[i].name)
+                roleChange = changingRole[i].id
+        }
+
+        db.query(`UPDATE employee ( first_name, last_name, role_id ) 
+        VALUES ( "${answer.selectEmployee}", "${answer.changingRole}")`
+
+        )
+        console.log('EMPLOYEE UPDATED')
+
+        mainMenu();
+
+    })
+   
+
 }
