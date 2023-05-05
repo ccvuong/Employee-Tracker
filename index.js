@@ -291,7 +291,7 @@ const updateEmployee = () => {
     const changingRole = [];
 
     // selecting available employees
-    db.query(`SELECT first_name FROM employee`, (err, results) => {
+    db.query(`SELECT * FROM employee`, (err, results) => {
         if (err) throw err;
 
         results.forEach(({ first_name, last_name, role_id, manager_id, id }) => {
@@ -304,61 +304,70 @@ const updateEmployee = () => {
             })
         });
 
-    })
 
-    // selecting from available roles 
-    db.query(`SELECT title FROM role`, (err, results) => {
-        if (err) throw err;
 
-        results.forEach(({ title, department_id, salary, id }) => {
-            changingRole.push({
-                name: title,
-                deptRoleID: department_id,
-                salary: salary,
+        // selecting from available roles 
+        db.query(`SELECT * FROM role`, (err, results) => {
+            if (err) throw err;
 
-                id: id
+            results.forEach(({ title, department_id, salary, id }) => {
+                changingRole.push({
+                    name: title,
+                    deptRoleID: department_id,
+                    salary: salary,
+
+                    id: id
+                })
+            });
+
+
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'upEmployee',
+                    message: 'Select an employee to update their role:',
+                    choices: selectEmployee,
+                }
+
+            ]).then((answer) => {
+                // for loop for employee selected
+                let pickEmployee
+                for (var i = 0; i < selectEmployee.length; i++) {
+                    if (answer.upEmployee == selectEmployee[i].name)
+                        pickEmployee = selectEmployee[i].id
+                }
+
+
+
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'upRole',
+                        message: 'Select new role for employee:',
+                        choices: changingRole
+                    }
+
+                ]).then((answer) => {
+                    // for loop for role selected
+                    let roleChange
+                    for (var i = 0; i < changingRole.length; i++) {
+                        if (answer.upRole == changingRole[i].name)
+                            roleChange = changingRole[i].id
+                    }
+
+
+
+                    db.query(`UPDATE employee SET role_id = ${roleChange} WHERE id = ${pickEmployee}`
+
+                    )
+                    console.log('EMPLOYEE UPDATED')
+
+                    mainMenu();
+                })
             })
-        });
+        })
 
     })
-
-    inquirer.prompt([
-        {
-            type: 'list',
-            name: 'upEmployee',
-            message: 'Select an employee to update their role',
-            choices: selectEmployee
-        },
-        {
-            type: 'list',
-            name: 'upRole',
-            message: 'Select new role for employee:',
-            choices: changingRole
-        }
-    ]).then((answer) => {
-        // for loop for employee selected
-        let pickEmployee
-        for (var i = 0; i < selectEmployee.length; i++) {
-            if (answer.upRole == selectEmployee[i].name)
-                pickEmployee = selectEmployee[i].id
-        }
-
-        // for loop for role selected
-        let roleChange
-        for (var i = 0; i < changingRole.length; i++) {
-            if (answer.upRole == changingRole[i].name)
-                roleChange = changingRole[i].id
-        }
-
-        db.query(`UPDATE employee ( first_name, last_name, role_id ) 
-        VALUES ( "${answer.selectEmployee}", "${answer.changingRole}")`
-
-        )
-        console.log('EMPLOYEE UPDATED')
-
-        mainMenu();
-
-    })
-   
 
 }
