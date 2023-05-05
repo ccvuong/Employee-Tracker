@@ -52,10 +52,13 @@ Install the following in the ```terminal```:
 - [Inquirer package](https://www.npmjs.com/package/inquirer/v/8.2.4)
 
 ## Demo
-(TBA)
+
+https://user-images.githubusercontent.com/116984891/236381615-b9399546-4f31-4404-ab25-60a6a161dc19.mov
+
 
 ## Preview
-(TBA)
+![employee_tracker_preview](https://user-images.githubusercontent.com/116984891/236381560-a7a25da9-f584-4e6c-902c-145bb203a810.png)
+
 
 ## Contributors
 [😎 Christina Vuong ](https://github.com/ccvuong)
